@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include "run.h"
 
 #define CHUNK_SIZE 1024
 
@@ -19,10 +20,9 @@ int main(int argc, char *argv[]){
       return 1;
     }
     while(fgets(buffer, CHUNK_SIZE, fptr) != NULL){
-      printf("%s", buffer);
+      run(buffer);
     }
     fclose(fptr);
-    return 0;
 
     // Enter RePL
   } else {
@@ -32,9 +32,8 @@ int main(int argc, char *argv[]){
         printf("Error or EOF.\n");
         break;
       }
-      printf(">%s", buffer);
+      run(buffer);
     }
-    return 0;
   }
   
   return 0;
