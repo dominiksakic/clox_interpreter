@@ -1,3 +1,7 @@
+//token_type.h
+#ifndef TOKEN_TYPE_H
+#define TOKEN_TYPE_H
+
 typedef enum {
   // Single-character tokens.
   LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
@@ -18,3 +22,5 @@ typedef enum {
 
   TOKEN_EOF
 } TokenType;
+
+#endif

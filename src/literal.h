@@ -1,3 +1,7 @@
+//literal.h
+#ifndef LITERAL_H
+#define LITERAL_H
+
 typedef enum {
   LITERAL_NONE,
   LITERAL_NUMBER,
@@ -12,4 +16,7 @@ typedef struct {
   } as;
 } Literal;
 
+// Function to returna no-lteral, to save tyyping.
 Literal no_literal();
+
+#endif
