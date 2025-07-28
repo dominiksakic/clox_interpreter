@@ -11,3 +11,5 @@ typedef struct {
     char* string;
   } as;
 } Literal;
+
+Literal no_literal();

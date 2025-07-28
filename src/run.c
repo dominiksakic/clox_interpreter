@@ -11,9 +11,7 @@ void run(char* source){
     if (c == '\n') continue;
     if (c == '/'){
 
-      Literal lit;
-      lit.type = LITERAL_NONE;
-      Token token = make_token(SLASH, "/", lit, 1);
+      Token token = make_token(SLASH, "/", no_literal(), 1);
       print_token(token);
       
     }
