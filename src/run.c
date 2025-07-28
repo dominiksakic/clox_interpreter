@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include "token.h"
 #include "run.h"
 
 #define CHUNK_SIZE 1024
@@ -8,7 +9,16 @@ void run(char* source){
   for(int i = 0; source[i] != '\0'; i++){
     char token = source[i];
     if (token == '\n') continue;
-    printf("%c\n", token);
+    if (token == '/'){
+      Token token;
+      token.type = SLASH;
+      token.lexeme = "/";
+      token.line = 1;
+
+      token.literal.type = LITERAL_NONE;
+      token.literal.as.string = "/";
+      print_token(token);
+    }
   }
 }
 
