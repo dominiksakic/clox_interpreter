@@ -7,17 +7,15 @@
 
 void run(char* source){
   for(int i = 0; source[i] != '\0'; i++){
-    char token = source[i];
-    if (token == '\n') continue;
-    if (token == '/'){
-      Token token;
-      token.type = SLASH;
-      token.lexeme = "/";
-      token.line = 1;
+    char c = source[i];
+    if (c == '\n') continue;
+    if (c == '/'){
 
-      token.literal.type = LITERAL_NONE;
-      token.literal.as.string = "/";
+      Literal lit;
+      lit.type = LITERAL_NONE;
+      Token token = make_token(SLASH, "/", lit, 1);
       print_token(token);
+      
     }
   }
 }

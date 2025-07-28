@@ -15,3 +15,13 @@ void print_token(Token token) {
     }
     printf(", Line: %d\n", token.line);
 }
+
+Token make_token(TokenType type, char* lexeme, Literal literal, int line) {
+    Token token;
+    token.type = type;
+    token.lexeme = lexeme;
+    token.literal = literal;
+    token.line = line;
+    return token;
+}
+
