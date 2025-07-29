@@ -2,20 +2,22 @@
 #include <stdbool.h>
 #include "token.h"
 #include "run.h"
+#include "scanner.h"
 
 #define CHUNK_SIZE 1024
 
 void run(char* source){
-  for(int i = 0; source[i] != '\0'; i++){
-    char c = source[i];
-    if (c == '\n') continue;
-    if (c == '/'){
-
-      Token token = make_token(SLASH, "/", no_literal(), 1);
-      print_token(token);
-      
-    }
-  }
+  scanner(source);
+//  for(int i = 0; source[i] != '\0'; i++){
+//    char c = source[i];
+//    if (c == '\n') continue;
+ //   if (c == '/'){
+//
+ //     Token token = make_token(SLASH, "/", no_literal(), 1);
+  //    print_token(token);
+   //   
+    //}
+  //}
 }
 
 void runFile(char* path){
