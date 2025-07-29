@@ -11,6 +11,12 @@ typedef struct {
   int line;
 } Token;
 
+typedef struct {
+  Token* data;
+  int size;
+  int capacity;
+} TokenList;
+
 void print_token(Token token);
 
 Token make_token(TokenType type, char* lexeme, Literal literal, int line);

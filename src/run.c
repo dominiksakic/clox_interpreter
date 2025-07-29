@@ -7,17 +7,15 @@
 #define CHUNK_SIZE 1024
 
 void run(char* source){
-  scanner(source);
+  TokenList tokens = scanner(source);
+  for(int i = 0; i < tokens.size; i++){
+    Token token = tokens.data[i];
+    print_token(token);
+  }
 //  for(int i = 0; source[i] != '\0'; i++){
 //    char c = source[i];
 //    if (c == '\n') continue;
- //   if (c == '/'){
-//
- //     Token token = make_token(SLASH, "/", no_literal(), 1);
-  //    print_token(token);
-   //   
-    //}
-  //}
+//  }
 }
 
 void runFile(char* path){

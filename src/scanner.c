@@ -3,22 +3,23 @@
 #include "scanner.h"
 #include "token.h" 
 
-void scanner(char* source){
+TokenList scanner(char* source){
   int capacity = 2; 
   int size = 0;
-  int* array = malloc(capacity * sizeof(int));
+  TokenList tokens;
+  tokens.data = malloc(capacity * sizeof(Token));
 
-  for(int i = 0; i < 6; i++){
+  for(int i = 0; i < 2; i++){
     if(size == capacity){
       capacity *= 2;
-      array = realloc(array, capacity * sizeof(int));
+      tokens.data = realloc(tokens.data, capacity * sizeof(Token));
     }
-    array[size++] = i * 10;
+    Token token = make_token(SLASH, "/", no_literal(), 1);
+    tokens.data[size++] = token;
   }
-  for (int i = 0; i < size; i++) {
-        printf("%d\n", array[i]);
-    }
-  free(array);
 
- return;
+  tokens.size = size;
+  tokens.capacity = capacity;
+
+ return tokens;
 }

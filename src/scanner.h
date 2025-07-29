@@ -1,6 +1,7 @@
 #ifndef SCANNER_H
 #define SCANNER_H
+#include "token.h"
 
-void scanner(char* source);
+TokenList scanner(char* source);
 
 #endif
