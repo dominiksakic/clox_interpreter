@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "scanner.h"
 #include "token.h" 
+#include "token_type.h"
 
 TokenList scan(char* source){
   Scanner scanner = {
@@ -65,6 +66,34 @@ TokenList scan(char* source){
       case '*' : 
         token = make_token(STAR, "*", no_literal(), line);
         break;
+      case '!' : 
+        if (match(&scanner, '=')){
+          token = make_token(BANG_EQUAL, "!=", no_literal(), line);
+        } else {
+          token = make_token(BANG, "!", no_literal(), line);
+        }
+        break;
+      case '=' : 
+        if (match(&scanner, '=')){
+          token = make_token(EQUAL_EQUAL, "==", no_literal(), line);
+        } else {
+          token = make_token(EQUAL, "=", no_literal(), line);
+        }
+        break;
+      case '<' : 
+        if (match(&scanner, '=')){
+          token = make_token(LESS_EQUAL, "<=", no_literal(), line);
+        } else {
+          token = make_token(LESS, "<", no_literal(), line);
+        }
+        break;
+      case '>' : 
+        if (match(&scanner, '=')){
+          token = make_token(GREATER_EQUAL, ">=", no_literal(), line);
+        } else {
+          token = make_token(GREATER, ">", no_literal(), line);
+        }
+        break;
       default:
         printf("Unexpected character: %c", c);
         break;
@@ -89,4 +118,15 @@ bool is_at_end(Scanner* scanner){
   return current_char == '\0';
 }
 
+bool match(Scanner* scanner, char expected){
+  if(is_at_end(scanner)){
+    return false;
+  }
+
+  char current_char = scanner->source[scanner->current];
+  if(current_char != expected) return false;
+
+  scanner->current++;
+  return true;
+}
 

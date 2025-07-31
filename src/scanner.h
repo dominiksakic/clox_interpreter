@@ -16,5 +16,7 @@ char peek(Scanner* scanner);
 
 bool is_at_end(Scanner* scanner);
 
+bool match(Scanner* scanner, char expected);
+
 TokenList scan(char* source);
 #endif
