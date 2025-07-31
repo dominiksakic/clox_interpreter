@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include "token.h"
 #include "run.h"
@@ -7,15 +8,16 @@
 #define CHUNK_SIZE 1024
 
 void run(char* source){
-  TokenList tokens = scanner(source);
+  TokenList tokens = scan(source);
   for(int i = 0; i < tokens.size; i++){
-    Token token = tokens.data[i];
-    print_token(token);
+    int defined_enums = 39;
+    if (tokens.data[i].type > defined_enums){
+      printf("\n");
+      break;
+    }
+    print_token(tokens.data[i]);
   }
-//  for(int i = 0; source[i] != '\0'; i++){
-//    char c = source[i];
-//    if (c == '\n') continue;
-//  }
+  free(tokens.data);
 }
 
 void runFile(char* path){
