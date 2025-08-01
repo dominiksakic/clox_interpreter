@@ -12,11 +12,11 @@ typedef struct {
 
 char advance(Scanner* scanner);
 
-char peek(Scanner* scanner);
-
 bool is_at_end(Scanner* scanner);
 
 bool match(Scanner* scanner, char expected);
+
+char peek(Scanner* scanner);
 
 TokenList scan(char* source);
 #endif

@@ -25,86 +25,117 @@ TokenList scan(char* source){
       tokens.data = realloc(tokens.data, capacity * sizeof(Token));
     }
 
-    char c = advance(&scanner);
-    
-    if(c =='\n'){
-      scanner.line++;
-      continue;
-    }
-
     Token token;
-    int line = scanner.line;
+    char c = advance(&scanner);
 
     switch(c){
       case '(' : 
-        token = make_token(LEFT_PAREN, "(", no_literal(), line);
+        token = make_token(LEFT_PAREN, "(", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case ')' : 
-        token = make_token(RIGHT_PAREN, ")", no_literal(), line);
+        token = make_token(RIGHT_PAREN, ")", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case '{' : 
-        token = make_token(LEFT_BRACE, "{", no_literal(), line);
+        token = make_token(LEFT_BRACE, "{", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case '}' : 
-        token = make_token(RIGHT_BRACE, "}", no_literal(), line);
+        token = make_token(RIGHT_BRACE, "}", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case ',' : 
-        token = make_token(COMMA, ",", no_literal(), line);
+        token = make_token(COMMA, ",", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case '.' : 
-        token = make_token(DOT, ".", no_literal(), line);
+        token = make_token(DOT, ".", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case '-' : 
-        token = make_token(MINUS, "-", no_literal(), line);
+        token = make_token(MINUS, "-", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case '+' : 
-        token = make_token(PLUS, "+", no_literal(), line);
+        token = make_token(PLUS, "+", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case ';' : 
-        token = make_token(SEMICOLON, ";", no_literal(), line);
+        token = make_token(SEMICOLON, ";", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case '*' : 
-        token = make_token(STAR, "*", no_literal(), line);
+        token = make_token(STAR, "*", no_literal(), scanner.line);
+        tokens.data[size++] = token;
         break;
       case '!' : 
         if (match(&scanner, '=')){
-          token = make_token(BANG_EQUAL, "!=", no_literal(), line);
+          token = make_token(BANG_EQUAL, "!=", no_literal(), scanner.line);
+          tokens.data[size++] = token;
         } else {
-          token = make_token(BANG, "!", no_literal(), line);
+          token = make_token(BANG, "!", no_literal(), scanner.line);
+          tokens.data[size++] = token;
         }
         break;
       case '=' : 
         if (match(&scanner, '=')){
-          token = make_token(EQUAL_EQUAL, "==", no_literal(), line);
+          token = make_token(EQUAL_EQUAL, "==", no_literal(), scanner.line);
+          tokens.data[size++] = token;
         } else {
-          token = make_token(EQUAL, "=", no_literal(), line);
+          token = make_token(EQUAL, "=", no_literal(), scanner.line);
+          tokens.data[size++] = token;
         }
         break;
       case '<' : 
         if (match(&scanner, '=')){
-          token = make_token(LESS_EQUAL, "<=", no_literal(), line);
+          token = make_token(LESS_EQUAL, "<=", no_literal(), scanner.line);
+          tokens.data[size++] = token;
         } else {
-          token = make_token(LESS, "<", no_literal(), line);
+          token = make_token(LESS, "<", no_literal(), scanner.line);
+          tokens.data[size++] = token;
         }
         break;
       case '>' : 
         if (match(&scanner, '=')){
-          token = make_token(GREATER_EQUAL, ">=", no_literal(), line);
+          token = make_token(GREATER_EQUAL, ">=", no_literal(), scanner.line);
+          tokens.data[size++] = token;
         } else {
-          token = make_token(GREATER, ">", no_literal(), line);
+          token = make_token(GREATER, ">", no_literal(), scanner.line);
+          tokens.data[size++] = token;
         }
+        break;
+      case '/' : 
+        if (match(&scanner, '/')){
+          while(peek(&scanner) != '\n' && !is_at_end(&scanner)) advance(&scanner);
+        } else {
+          token = make_token(SLASH, "/", no_literal(), scanner.line);
+          tokens.data[size++] = token;
+        }
+        break;
+      case ' ':
+      case '\r':
+      case '\t':
+        break;
+      case '\n':
+        scanner.line++;
         break;
       default:
         printf("Unexpected character: %c", c);
         break;
     }
-    tokens.data[size++] = token;
   }
 
   tokens.size = size;
   tokens.capacity = capacity;
 
  return tokens;
+}
+char peek(Scanner* scanner){
+  if(is_at_end(scanner)){
+    return '\0';
+  }
+  return scanner->source[scanner->current];
 }
 
 char advance(Scanner* scanner){
