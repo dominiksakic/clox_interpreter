@@ -1,171 +1,166 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include "scanner.h"
-#include "token.h" 
-#include "token_type.h"
 #include "literal.h"
+#include "token.h"
+#include "token_type.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-TokenList scan(char* source){
-  Scanner scanner = {
-    .source = source,
-    .start = 0,
-    .current = 0,
-    .line = 1
-  };
+TokenList scan(char *source) {
+  Scanner scanner = {.source = source, .start = 0, .current = 0, .line = 1};
 
-  int capacity = 2; 
+  int capacity = 2;
   int size = 0;
 
   TokenList tokens;
   tokens.data = malloc(capacity * sizeof(Token));
-  
-  while (!is_at_end(&scanner)){
-    if(size == capacity){
+
+  while (!is_at_end(&scanner)) {
+    if (size == capacity) {
       capacity *= 2;
       tokens.data = realloc(tokens.data, capacity * sizeof(Token));
     }
-
 
     Token token;
     scanner.start = scanner.current;
     char c = advance(&scanner);
 
-    switch(c){
-      case '(' : 
-        token = make_token(LEFT_PAREN, "(", no_literal(), scanner.line);
+    switch (c) {
+    case '(':
+      token = make_token(LEFT_PAREN, "(", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case ')':
+      token = make_token(RIGHT_PAREN, ")", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case '{':
+      token = make_token(LEFT_BRACE, "{", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case '}':
+      token = make_token(RIGHT_BRACE, "}", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case ',':
+      token = make_token(COMMA, ",", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case '.':
+      token = make_token(DOT, ".", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case '-':
+      token = make_token(MINUS, "-", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case '+':
+      token = make_token(PLUS, "+", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case ';':
+      token = make_token(SEMICOLON, ";", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case '*':
+      token = make_token(STAR, "*", no_literal(), scanner.line);
+      tokens.data[size++] = token;
+      break;
+    case '!':
+      if (match(&scanner, '=')) {
+        token = make_token(BANG_EQUAL, "!=", no_literal(), scanner.line);
         tokens.data[size++] = token;
-        break;
-      case ')' : 
-        token = make_token(RIGHT_PAREN, ")", no_literal(), scanner.line);
+      } else {
+        token = make_token(BANG, "!", no_literal(), scanner.line);
         tokens.data[size++] = token;
-        break;
-      case '{' : 
-        token = make_token(LEFT_BRACE, "{", no_literal(), scanner.line);
+      }
+      break;
+    case '=':
+      if (match(&scanner, '=')) {
+        token = make_token(EQUAL_EQUAL, "==", no_literal(), scanner.line);
         tokens.data[size++] = token;
-        break;
-      case '}' : 
-        token = make_token(RIGHT_BRACE, "}", no_literal(), scanner.line);
+      } else {
+        token = make_token(EQUAL, "=", no_literal(), scanner.line);
         tokens.data[size++] = token;
-        break;
-      case ',' : 
-        token = make_token(COMMA, ",", no_literal(), scanner.line);
+      }
+      break;
+    case '<':
+      if (match(&scanner, '=')) {
+        token = make_token(LESS_EQUAL, "<=", no_literal(), scanner.line);
         tokens.data[size++] = token;
-        break;
-      case '.' : 
-        token = make_token(DOT, ".", no_literal(), scanner.line);
+      } else {
+        token = make_token(LESS, "<", no_literal(), scanner.line);
         tokens.data[size++] = token;
-        break;
-      case '-' : 
-        token = make_token(MINUS, "-", no_literal(), scanner.line);
+      }
+      break;
+    case '>':
+      if (match(&scanner, '=')) {
+        token = make_token(GREATER_EQUAL, ">=", no_literal(), scanner.line);
         tokens.data[size++] = token;
-        break;
-      case '+' : 
-        token = make_token(PLUS, "+", no_literal(), scanner.line);
+      } else {
+        token = make_token(GREATER, ">", no_literal(), scanner.line);
         tokens.data[size++] = token;
-        break;
-      case ';' : 
-        token = make_token(SEMICOLON, ";", no_literal(), scanner.line);
+      }
+      break;
+    case '/':
+      if (match(&scanner, '/')) {
+        while (peek(&scanner) != '\n' && !is_at_end(&scanner))
+          advance(&scanner);
+      } else {
+        token = make_token(SLASH, "/", no_literal(), scanner.line);
         tokens.data[size++] = token;
-        break;
-      case '*' : 
-        token = make_token(STAR, "*", no_literal(), scanner.line);
+      }
+      break;
+    case ' ':
+    case '\r':
+    case '\t':
+      break;
+    case '\n':
+      scanner.line++;
+      break;
+    case '"':
+      char *value = string(&scanner);
+      Literal lit = string_literal(value);
+      token = make_token(STRING, value, lit, scanner.line);
+      tokens.data[size++] = token;
+      break;
+    default:
+      if (is_digit(c)) {
+        char *num_str = number(&scanner);
+        Literal lit = number_literal(num_str);
+        token = make_token(NUMBER, num_str, lit, scanner.line);
         tokens.data[size++] = token;
-        break;
-      case '!' : 
-        if (match(&scanner, '=')){
-          token = make_token(BANG_EQUAL, "!=", no_literal(), scanner.line);
-          tokens.data[size++] = token;
-        } else {
-          token = make_token(BANG, "!", no_literal(), scanner.line);
-          tokens.data[size++] = token;
-        }
-        break;
-      case '=' : 
-        if (match(&scanner, '=')){
-          token = make_token(EQUAL_EQUAL, "==", no_literal(), scanner.line);
-          tokens.data[size++] = token;
-        } else {
-          token = make_token(EQUAL, "=", no_literal(), scanner.line);
-          tokens.data[size++] = token;
-        }
-        break;
-      case '<' : 
-        if (match(&scanner, '=')){
-          token = make_token(LESS_EQUAL, "<=", no_literal(), scanner.line);
-          tokens.data[size++] = token;
-        } else {
-          token = make_token(LESS, "<", no_literal(), scanner.line);
-          tokens.data[size++] = token;
-        }
-        break;
-      case '>' : 
-        if (match(&scanner, '=')){
-          token = make_token(GREATER_EQUAL, ">=", no_literal(), scanner.line);
-          tokens.data[size++] = token;
-        } else {
-          token = make_token(GREATER, ">", no_literal(), scanner.line);
-          tokens.data[size++] = token;
-        }
-        break;
-      case '/' : 
-        if (match(&scanner, '/')){
-          while(peek(&scanner) != '\n' && !is_at_end(&scanner)) advance(&scanner);
-        } else {
-          token = make_token(SLASH, "/", no_literal(), scanner.line);
-          tokens.data[size++] = token;
-        }
-        break;
-      case ' ':
-      case '\r':
-      case '\t':
-        break;
-      case '\n':
-        scanner.line++;
-        break;
-      case '"':
-        char* value = string(&scanner);
-        Literal lit = string_literal(value);
-        token = make_token(STRING, value, lit,scanner.line);
-        tokens.data[size++] = token;
-        break;
-      default:
-        if(is_digit(c)){
-          char* num_str = number(&scanner);
-          Literal lit = number_literal(num_str);
-          token = make_token(NUMBER, num_str, lit,scanner.line);
-          tokens.data[size++] = token;
-        } else{
-          printf("Unexpected character: %c", c);
-        }
-        break;
+      } else {
+        printf("Unexpected character: %c", c);
+      }
+      break;
     }
   }
 
   tokens.size = size;
   tokens.capacity = capacity;
 
- return tokens;
+  return tokens;
 }
-char* string(Scanner* scanner){
-  while(peek(scanner) != '"' && !is_at_end(scanner)){
-    if(peek(scanner) == '\n'){
+char *string(Scanner *scanner) {
+  while (peek(scanner) != '"' && !is_at_end(scanner)) {
+    if (peek(scanner) == '\n') {
       scanner->line++;
     }
     advance(scanner);
   }
 
-  if(is_at_end(scanner)){
+  if (is_at_end(scanner)) {
     printf("Error: Unterminated string in line: %d", scanner->line);
   }
 
   advance(scanner);
   int length = scanner->current - scanner->start - 2; // exclude surroundings
 
-  //Allocate memory for the string
-  char* value = malloc(length + 1);
-  if(value == NULL){
+  // Allocate memory for the string
+  char *value = malloc(length + 1);
+  if (value == NULL) {
     fprintf(stderr, "Memory allocation failed.\n");
     exit(1);
   }
@@ -173,23 +168,23 @@ char* string(Scanner* scanner){
   return value;
 }
 
-char* number(Scanner* scanner){
-  while(is_digit(peek(scanner))){
+char *number(Scanner *scanner) {
+  while (is_digit(peek(scanner))) {
     advance(scanner);
   }
 
-  if(peek(scanner) == '.' && is_digit(peek_next(scanner))){
+  if (peek(scanner) == '.' && is_digit(peek_next(scanner))) {
     advance(scanner);
 
-    while(is_digit(peek(scanner))){
+    while (is_digit(peek(scanner))) {
       advance(scanner);
     }
   }
   int length = scanner->current - scanner->start; // exclude surroundings
 
-  //Allocate memory for the string
-  char* num_str = malloc(length + 1);
-  if(num_str == NULL){
+  // Allocate memory for the string
+  char *num_str = malloc(length + 1);
+  if (num_str == NULL) {
     fprintf(stderr, "Memory allocation failed.\n");
     exit(1);
   }
@@ -197,45 +192,45 @@ char* number(Scanner* scanner){
   return num_str;
 }
 
-char peek(Scanner* scanner){
-  if(is_at_end(scanner)){
+char peek(Scanner *scanner) {
+  if (is_at_end(scanner)) {
     return '\0';
   }
   return scanner->source[scanner->current];
 }
 
-char peek_next(Scanner* scanner){
-  char next_char = scanner->source[scanner->current+1];
-  if(next_char == '\0'){
+char peek_next(Scanner *scanner) {
+  char next_char = scanner->source[scanner->current + 1];
+  if (next_char == '\0') {
     return '\0';
   }
-  return next_char; 
+  return next_char;
 }
 
-char advance(Scanner* scanner){
+char advance(Scanner *scanner) {
   char current_char = scanner->source[scanner->current];
   scanner->current++;
   return current_char;
 }
 
-bool is_at_end(Scanner* scanner){
+bool is_at_end(Scanner *scanner) {
   char current_char = scanner->source[scanner->current];
   return current_char == '\0';
 }
 
-bool is_digit(char current_char){
+bool is_digit(char current_char) {
   return current_char >= '0' && current_char <= '9';
 }
 
-bool match(Scanner* scanner, char expected){
-  if(is_at_end(scanner)){
+bool match(Scanner *scanner, char expected) {
+  if (is_at_end(scanner)) {
     return false;
   }
 
   char current_char = scanner->source[scanner->current];
-  if(current_char != expected) return false;
+  if (current_char != expected)
+    return false;
 
   scanner->current++;
   return true;
 }
-

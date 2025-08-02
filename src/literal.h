@@ -1,26 +1,22 @@
-//literal.h
+// literal.h
 #ifndef LITERAL_H
 #define LITERAL_H
 
-typedef enum {
-  LITERAL_NONE,
-  LITERAL_NUMBER,
-  LITERAL_STRING
-} LiteralType;
+typedef enum { LITERAL_NONE, LITERAL_NUMBER, LITERAL_STRING } LiteralType;
 
 typedef struct {
   LiteralType type;
   union {
     double number;
-    char* string;
+    char *string;
   } as;
 } Literal;
 
 // Function to returna no-lteral, to save tyyping.
 Literal no_literal();
 
-Literal string_literal(char* value);
+Literal string_literal(char *value);
 
-Literal number_literal(char* num_str);
+Literal number_literal(char *num_str);
 
 #endif
