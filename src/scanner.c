@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "scanner.h"
 #include "token.h" 
 #include "token_type.h"
+#include "literal.h"
 
 TokenList scan(char* source){
   Scanner scanner = {
@@ -25,7 +27,9 @@ TokenList scan(char* source){
       tokens.data = realloc(tokens.data, capacity * sizeof(Token));
     }
 
+
     Token token;
+    scanner.start = scanner.current;
     char c = advance(&scanner);
 
     switch(c){
@@ -120,6 +124,12 @@ TokenList scan(char* source){
       case '\n':
         scanner.line++;
         break;
+      case '"':
+        char* value = string(&scanner);
+        Literal lit = string_literal(value);
+        token = make_token(STRING, value, lit,scanner.line);
+        tokens.data[size++] = token;
+        break;
       default:
         printf("Unexpected character: %c", c);
         break;
@@ -131,6 +141,31 @@ TokenList scan(char* source){
 
  return tokens;
 }
+char* string(Scanner* scanner){
+  while(peek(scanner) != '"' && !is_at_end(scanner)){
+    if(peek(scanner) == '\n'){
+      scanner->line++;
+    }
+    advance(scanner);
+  }
+
+  if(is_at_end(scanner)){
+    printf("Error: Unterminated string in line: %d", scanner->line);
+  }
+
+  advance(scanner);
+  int length = scanner->current - scanner->start - 2; // exclude surroundings
+
+  //Allocate memory for the string
+  char* value = malloc(length + 1);
+  if(value == NULL){
+    fprintf(stderr, "Memory allocation failed.\n");
+    exit(1);
+  }
+  strncpy(value, scanner->source + scanner->start + 1, length);
+  return value;
+}
+
 char peek(Scanner* scanner){
   if(is_at_end(scanner)){
     return '\0';

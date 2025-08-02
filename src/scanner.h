@@ -18,5 +18,7 @@ bool match(Scanner* scanner, char expected);
 
 char peek(Scanner* scanner);
 
+char* string(Scanner* scanner);
+
 TokenList scan(char* source);
 #endif

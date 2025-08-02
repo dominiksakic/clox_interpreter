@@ -19,4 +19,6 @@ typedef struct {
 // Function to returna no-lteral, to save tyyping.
 Literal no_literal();
 
+Literal string_literal(char* value);
+
 #endif
