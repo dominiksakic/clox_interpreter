@@ -21,4 +21,6 @@ Literal no_literal();
 
 Literal string_literal(char* value);
 
+Literal number_literal(char* num_str);
+
 #endif

@@ -131,7 +131,14 @@ TokenList scan(char* source){
         tokens.data[size++] = token;
         break;
       default:
-        printf("Unexpected character: %c", c);
+        if(is_digit(c)){
+          char* num_str = number(&scanner);
+          Literal lit = number_literal(num_str);
+          token = make_token(NUMBER, num_str, lit,scanner.line);
+          tokens.data[size++] = token;
+        } else{
+          printf("Unexpected character: %c", c);
+        }
         break;
     }
   }
@@ -166,11 +173,43 @@ char* string(Scanner* scanner){
   return value;
 }
 
+char* number(Scanner* scanner){
+  while(is_digit(peek(scanner))){
+    advance(scanner);
+  }
+
+  if(peek(scanner) == '.' && is_digit(peek_next(scanner))){
+    advance(scanner);
+
+    while(is_digit(peek(scanner))){
+      advance(scanner);
+    }
+  }
+  int length = scanner->current - scanner->start; // exclude surroundings
+
+  //Allocate memory for the string
+  char* num_str = malloc(length + 1);
+  if(num_str == NULL){
+    fprintf(stderr, "Memory allocation failed.\n");
+    exit(1);
+  }
+  strncpy(num_str, scanner->source + scanner->start, length);
+  return num_str;
+}
+
 char peek(Scanner* scanner){
   if(is_at_end(scanner)){
     return '\0';
   }
   return scanner->source[scanner->current];
+}
+
+char peek_next(Scanner* scanner){
+  char next_char = scanner->source[scanner->current+1];
+  if(next_char == '\0'){
+    return '\0';
+  }
+  return next_char; 
 }
 
 char advance(Scanner* scanner){
@@ -182,6 +221,10 @@ char advance(Scanner* scanner){
 bool is_at_end(Scanner* scanner){
   char current_char = scanner->source[scanner->current];
   return current_char == '\0';
+}
+
+bool is_digit(char current_char){
+  return current_char >= '0' && current_char <= '9';
 }
 
 bool match(Scanner* scanner, char expected){

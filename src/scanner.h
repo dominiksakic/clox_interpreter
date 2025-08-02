@@ -18,7 +18,13 @@ bool match(Scanner* scanner, char expected);
 
 char peek(Scanner* scanner);
 
+char peek_next(Scanner* scanner);
+
 char* string(Scanner* scanner);
+
+char* number(Scanner* scanner);
+
+bool is_digit(char current_char);
 
 TokenList scan(char* source);
 #endif
