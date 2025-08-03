@@ -133,10 +133,9 @@ TokenList scan(char *source) {
         tokens.data[size++] = token;
       } else if (is_alpha(c)) {
         char *value = identifier(&scanner);
-		printf("is alpha returns: %s",value);
-        //        Literal lit = identifiers_literal(value);
-        // Problem WHAT?, I need to get the identifier TOKENS
-        //        token = make_token(WHAT, value, lit, scanner.line);
+        TokenType type = get_keyword(value);
+        token = make_token(type, value, no_literal(), scanner.line);
+        tokens.data[size++] = token;
       } else {
         printf("Unexpected character: %c", c);
       }
@@ -213,6 +212,43 @@ char *identifier(Scanner *scanner) {
   }
   strncpy(value, scanner->source + scanner->start, length);
   return value;
+}
+
+TokenType get_keyword(char *parsed_word) {
+  if (strcmp(parsed_word, "and") == 0)
+    return AND;
+  if (strcmp(parsed_word, "class") == 0)
+    return CLASS;
+  if (strcmp(parsed_word, "else") == 0)
+    return ELSE;
+  if (strcmp(parsed_word, "false") == 0)
+    return FALSE;
+  if (strcmp(parsed_word, "fun") == 0)
+    return FUN;
+  if (strcmp(parsed_word, "for") == 0)
+    return FOR;
+  if (strcmp(parsed_word, "if") == 0)
+    return IF;
+  if (strcmp(parsed_word, "nil") == 0)
+    return NIL;
+  if (strcmp(parsed_word, "or") == 0)
+    return OR;
+  if (strcmp(parsed_word, "print") == 0)
+    return PRINT;
+  if (strcmp(parsed_word, "return") == 0)
+    return RETURN;
+  if (strcmp(parsed_word, "super") == 0)
+    return SUPER;
+  if (strcmp(parsed_word, "this") == 0)
+    return THIS;
+  if (strcmp(parsed_word, "true") == 0)
+    return TRUE;
+  if (strcmp(parsed_word, "var") == 0)
+    return VAR;
+  if (strcmp(parsed_word, "while") == 0)
+    return WHILE;
+
+  return IDENTIFIER;
 }
 
 char peek(Scanner *scanner) {
