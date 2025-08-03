@@ -21,16 +21,30 @@ void run(char *source) {
 }
 
 void runFile(char *path) {
-  char buffer[CHUNK_SIZE];
   FILE *fptr = fopen(path, "r");
   if (fptr == NULL) {
     perror("Error reading file.");
     return;
   }
-  while (fgets(buffer, CHUNK_SIZE, fptr) != NULL) {
-    run(buffer);
+  // Read the whole file and rewind to beginning.
+  fseek(fptr, 0, SEEK_END);
+  long file_size = ftell(fptr);
+  rewind(fptr);
+
+  char *buffer = malloc(file_size + 1);
+  if (buffer == NULL) {
+    fprintf(stderr, "Memory allocation failed\n");
+    fclose(fptr);
+    return;
   }
+
+  size_t bytes_read = fread(buffer, 1, file_size, fptr);
+  buffer[bytes_read] = '\0'; // Null-terminate
+
   fclose(fptr);
+
+  run(buffer);
+  free(buffer);
 }
 
 void runPrompt() {
