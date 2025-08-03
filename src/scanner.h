@@ -24,7 +24,13 @@ char *string(Scanner *scanner);
 
 char *number(Scanner *scanner);
 
+char *identifier(Scanner *scanner);
+
 bool is_digit(char current_char);
+
+bool is_alpha(char current_char);
+
+bool is_alpha_numeric(char current_char);
 
 TokenList scan(char *source);
 #endif

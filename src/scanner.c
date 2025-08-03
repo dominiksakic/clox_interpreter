@@ -131,6 +131,12 @@ TokenList scan(char *source) {
         Literal lit = number_literal(num_str);
         token = make_token(NUMBER, num_str, lit, scanner.line);
         tokens.data[size++] = token;
+      } else if (is_alpha(c)) {
+        char *value = identifier(&scanner);
+		printf("is alpha returns: %s",value);
+        //        Literal lit = identifiers_literal(value);
+        // Problem WHAT?, I need to get the identifier TOKENS
+        //        token = make_token(WHAT, value, lit, scanner.line);
       } else {
         printf("Unexpected character: %c", c);
       }
@@ -192,6 +198,23 @@ char *number(Scanner *scanner) {
   return num_str;
 }
 
+char *identifier(Scanner *scanner) {
+  while (is_alpha_numeric(peek(scanner))) {
+    advance(scanner);
+  }
+
+  int length = scanner->current - scanner->start;
+
+  // Allocate memory for the string
+  char *value = malloc(length);
+  if (value == NULL) {
+    fprintf(stderr, "Memory allocation failed.\n");
+    exit(1);
+  }
+  strncpy(value, scanner->source + scanner->start, length);
+  return value;
+}
+
 char peek(Scanner *scanner) {
   if (is_at_end(scanner)) {
     return '\0';
@@ -220,6 +243,15 @@ bool is_at_end(Scanner *scanner) {
 
 bool is_digit(char current_char) {
   return current_char >= '0' && current_char <= '9';
+}
+
+bool is_alpha(char current_char) {
+  return (current_char >= 'a' && current_char <= 'z') ||
+         (current_char >= 'A' && current_char <= 'Z') || current_char == '_';
+}
+
+bool is_alpha_numeric(char current_char) {
+  return is_alpha(current_char) || is_digit(current_char);
 }
 
 bool match(Scanner *scanner, char expected) {
