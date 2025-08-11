@@ -1,5 +1,4 @@
 #include "interpreter.h"
-#include "run.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {

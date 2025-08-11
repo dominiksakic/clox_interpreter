@@ -7,8 +7,8 @@
 typedef struct {
   char *source_code;
   bool has_error;
-  TokenList *tokens;
-  Scanner *scanner;
+  TokenList tokens;
+  Scanner scanner;
 } Interpreter;
 
 #endif
