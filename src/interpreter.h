@@ -11,7 +11,6 @@ typedef struct {
   Scanner scanner;
 } Interpreter;
 
-#endif
 
 // Lifecycle
 void interpreter_init(Interpreter *interp);
@@ -26,3 +25,5 @@ void interpreter_run_source(Interpreter *interp, const char *source);
 void interpreter_scan(Interpreter *interp);
 void interpreter_parse(Interpreter *interp);
 void interpreter_execute(Interpreter *interp);
+
+#endif
