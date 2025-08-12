@@ -70,5 +70,6 @@ void interpreter_run_prompt(Interpreter *interp) {
       break;
     }
     interpreter_run_source(interp, buffer);
+		interp->has_error = false;
   }
 }
